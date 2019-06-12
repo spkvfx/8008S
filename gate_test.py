@@ -20,12 +20,12 @@ class Gate:
         self.status = False
         self.sustain = True
 
-    def trig(self, clock, beat):
-        if clock is 0 and self.status is not NOTEON:
+    def trig(self, beat, clock):
+        if beat is 0 :
             self.status = NOTEON
             print("NOTEON")
             return True
-        elif clock is self.leng and beat is not 0 and not self.sustain and self.status is not NOTEOFF:
+        elif beat is self.leng and clock is not 0 and not self.sustain and self.status is not NOTEOFF:
             self.status = NOTEOFF
             print("NOTEOFF")
             return True
@@ -71,12 +71,12 @@ class Sequencer:
 class Transport:
     def __init__(self, tempo):
         self.tempo = tempo
-        self.beat = -1
+        self.clock = -1
 
     def tick(self, control, frames):
         standard = int(((client.samplerate / frames) / self.tempo * 60) / division)
         if control % standard is 0:
-            self.beat += 1
+            self.clock += 1
             return True
         else:
             return False
@@ -125,7 +125,7 @@ def process(frames):
     outport.clear_buffer()
 
     if myTransport.tick(control, frames):
-        mySequencer.step(myTransport.beat)
+        mySequencer.step(myTransport.clock)
         if mySequencer.current_gate.status:
             print(mySequencer.position)
             write_gate(mySequencer.current_gate)
