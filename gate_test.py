@@ -17,18 +17,23 @@ class Gate:
         self.v = int(v)
         self.leng = l
 
+        self.active = True
         self.status = False
         self.sustain = True
 
     def trig(self, beat, clock):
-        if beat is 0 :
-            self.status = NOTEON
-            print("NOTEON")
-            return True
-        elif beat is self.leng and clock is not 0 and not self.sustain and self.status is not NOTEOFF:
-            self.status = NOTEOFF
-            print("NOTEOFF")
-            return True
+        if self.active :
+            if beat is 0 :
+                self.status = NOTEON
+                print("NOTEON")
+                return True
+            elif beat is self.leng and clock is not 0 and not self.sustain and self.status is not NOTEOFF:
+                self.status = NOTEOFF
+                print("NOTEOFF")
+                return True
+            else:
+                self.status = False
+                return False
         else:
             self.status = False
             return False
@@ -53,7 +58,7 @@ class Sequencer:
 
         print("beat:")
         print(beat)
-        print("clock")
+        print("clock:")
         print(clock)
         print("******")
 
@@ -81,8 +86,7 @@ class Transport:
         else:
             return False
 
-
-mySequencer = Sequencer(16)
+mySequencer = Sequencer(7)
 myTransport = Transport(120)
 
 print('*********************************')
@@ -106,8 +110,14 @@ for gate in mySequencer.seq:
         gate.sustain = mySequencer.seq[i-1].sustain
     if mySequencer.seq[i-1].nn is gate.nn:
         gate.nn += 5
-    i += 1
 
+    if i < len(mySequencer.seq) / 2:
+        i += 2
+    else:
+        i -= 1
+
+    if i > len(mySequencer.seq):
+        i = 0
 
 def write_gate(gate):
     event = (gate.status,
