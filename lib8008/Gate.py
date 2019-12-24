@@ -1,8 +1,10 @@
 NOTEON = 0x90
 NOTEOFF = 0x80
 
+import cffi
+
 class Gate(object):
-    def __init__(self, l=4, verbose=False):
+    def __init__(self, l=2, verbose=False):
         self.verbose = verbose
         self.leng = l
 
@@ -15,12 +17,12 @@ class Gate(object):
         self.msg = None
 
     #return the trigger event
-    def trig(self, beat, clock):
+    def trig(self, clock, beat):
         if self.active:
-            if beat is 0:
-                self.status = True
-            elif beat is self.leng and clock is not 0 and not self.sustain and self.status is not NOTEOFF:
-                self.status = False
+            if clock is 0:
+                self.status = "H"
+            elif (clock is self.leng) and (clock is not 0) and (self.status is not "L"):
+                self.status = "L"
             else:
                 self.status = False
         else:
@@ -39,7 +41,9 @@ class MidiGate(Gate):
         self.nn = nn
         self.v = v
         self.ch = ch
-        self.event = 0b00000000
+        self.event = 0x00
+
+        self.ffi = cffi.FFI()
 
         super().__init__()
 
@@ -47,7 +51,8 @@ class MidiGate(Gate):
         MSB = '1001' if self.status else '1000'
         LSB = format(self.ch, '04b')
 
-        self.event = int(MSB + LSB, 2)
+        self.event = 0x90 if self.status is "H" else 0x80 if self.status is "L" else self.status
+        #self.event = self.ffi.cast("uintptr_t", int(MSB + LSB, 2))
 
         self.msg = (self.event,
                     self.nn,

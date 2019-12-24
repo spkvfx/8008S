@@ -31,6 +31,7 @@ class Jack8008:
             if x:
                 self.send(x.message())
 
+
             self.control += 1
 
         self.control = 0

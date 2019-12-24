@@ -7,15 +7,13 @@ class Sequencer:
 
         self.sequence = []
         for gate in range(l):
-            self.sequence.append([Gate()])
+            self.sequence.append([Gate(),Gate(),Gate()])
 
         self.position = 0
 
         self.current_gate_list = []
 
         self.verbose = verbose
-
-        self.seq = self.sequence
 
     def step(self, beat):
         clock = beat % self.length
@@ -37,5 +35,13 @@ class Sequencer:
 
         self.current_gate_list = self.sequence[self.position - 1]
 
+        #print(self.position,clock,beat)
+
         for x in self.current_gate_list:
             x.trig(clock, beat)
+
+    def assign(self,gate_type):
+        i = 0
+        for gates in self.sequence:
+            self.sequence[i] = [gate_type for i in gates]
+            i += 1
