@@ -18,7 +18,7 @@ class Jack8008:
         self.outport = self.client.midi_outports.register(self.outport_name)
         # self.inport = client.midi_inports.register('input')
 
-    def send(self, msg,channel=0):
+    def send(self, msg,channel=6):
         if self.verbose:
             print(msg)
         self.outport.write_midi_event(channel, msg)
@@ -30,8 +30,7 @@ class Jack8008:
             x = transport.play(sequencer_list,self.control,frames)
             if x:
                 self.send(x.message())
-
-
+                
             self.control += 1
 
         self.control = 0

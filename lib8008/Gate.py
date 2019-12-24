@@ -1,8 +1,3 @@
-NOTEON = 0x90
-NOTEOFF = 0x80
-
-import cffi
-
 class Gate(object):
     def __init__(self, l=2, verbose=False):
         self.verbose = verbose
@@ -41,9 +36,8 @@ class MidiGate(Gate):
         self.nn = nn
         self.v = v
         self.ch = ch
-        self.event = 0x00
 
-        self.ffi = cffi.FFI()
+        self.event = 0x00
 
         super().__init__()
 

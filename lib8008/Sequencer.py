@@ -26,16 +26,12 @@ class Sequencer:
             print(clock)
             print("******")
 
-        #self.position = clock%self.length - 1
-
         if clock is 0:
             self.position += 1
         elif self.position is self.length - 1:
             self.position = 0
 
         self.current_gate_list = self.sequence[self.position - 1]
-
-        #print(self.position,clock,beat)
 
         for x in self.current_gate_list:
             x.trig(clock, beat)
