@@ -1,41 +1,22 @@
-import jack
 from lib8008 import *
 
-client = jack.Client('MIDI-Gate')
-# inport = client.midi_inports.register('input')
-outport = client.midi_outports.register('output')
 
-myTransport = Transport(120,client)
+#my8008 = Jack8008()
+#my8008.connect()
+#samplerate = my8008.client.samplerate
+#my8008.outport.clear_buffer()
+
 mySequencer = Sequencer(16)
 
-print('*********************************')
-print(len(mySequencer.seq))
+for gates in mySequencer.sequence:
+    for gate in gates:
+        gate = MidiGate()
+        gate.nn = 0x12
+        gate.ch = 12
+        print(gate.message())
 
+#myTransport = Transport(samplerate, 120, 16)
 
-def write_gate(gate):
-    event = (gate.status,
-             gate.nn,
-             gate.v)
+#my8008.play([mySequencer],myTransport)
+#myTransport.play([mySequencer], my8008)
 
-    print(event)
-
-    outport.write_midi_event(0, event)
-
-
-@client.set_process_callback
-def process(frames):
-    global control
-    outport.clear_buffer()
-
-    if myTransport.tick(control, frames):
-        mySequencer.step(myTransport.clock)
-        if mySequencer.current_gate.status:
-            print(mySequencer.position)
-            write_gate(mySequencer.current_gate)
-
-    control += 1
-
-
-control = 0
-with client:
-    input()
